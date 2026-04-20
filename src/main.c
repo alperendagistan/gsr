@@ -1,62 +1,49 @@
 #include <zephyr/kernel.h>
-#include <zephyr/sys/printk.h>
-#include <zephyr/drivers/adc.h>
-#include <zephyr/dt-bindings/adc/nrf-saadc.h>
 #include <zephyr/device.h>
-#include <zephyr/devicetree.h>
-#include <stdint.h>
+#include <zephyr/drivers/adc.h>
+#include <zephyr/sys/printk.h>
 
-#define ADC_NODE DT_NODELABEL(adc)
+#define ADC_NODE DT_PATH(zephyr_user)
 
-static const struct device *adc_dev = DEVICE_DT_GET(ADC_NODE);
-
-static struct adc_channel_cfg channel_cfg = {
-    .gain             = ADC_GAIN_1_4,
-    .reference        = ADC_REF_INTERNAL,
-    .acquisition_time = ADC_ACQ_TIME_DEFAULT,
-    .channel_id       = 0,
-#if defined(CONFIG_ADC_CONFIGURABLE_INPUTS)
-    .input_positive   = NRF_SAADC_AIN4,   /* P1.11 */
-#endif
-};
+static const struct adc_dt_spec adc_chan0 =
+	ADC_DT_SPEC_GET_BY_IDX(ADC_NODE, 0);
 
 int main(void)
 {
-    int err;
-    int16_t sample_buffer;
+	int err;
+	int16_t buf;
+	struct adc_sequence sequence = {
+		.buffer = &buf,
+		.buffer_size = sizeof(buf),
+	};
 
-    struct adc_sequence sequence = {
-        .channels    = BIT(0),
-        .buffer      = &sample_buffer,
-        .buffer_size = sizeof(sample_buffer),
-        .resolution  = 12,
-    };
+	if (!adc_is_ready_dt(&adc_chan0)) {
+		printk("ADC device not ready\n");
+		return 0;
+	}
 
-    printk("GSR ADC Start\n");
+	err = adc_channel_setup_dt(&adc_chan0);
+	if (err < 0) {
+		printk("adc_channel_setup_dt failed: %d\n", err);
+		return 0;
+	}
 
-    if (!device_is_ready(adc_dev)) {
-        printk("ADC device not ready\n");
-        return 0;
-    }
+	while (1) {
+		err = adc_sequence_init_dt(&adc_chan0, &sequence);
+		if (err < 0) {
+			printk("adc_sequence_init_dt failed: %d\n", err);
+			break;
+		}
 
-    err = adc_channel_setup(adc_dev, &channel_cfg);
-    if (err < 0) {
-        printk("ADC setup failed (%d)\n", err);
-        return 0;
-    }
+		err = adc_read(adc_chan0.dev, &sequence);
+		if (err < 0) {
+			printk("adc_read failed: %d\n", err);
+		} else {
+			printk("%u,%d\n", k_uptime_get_32(), buf);
+		}
 
-    while (1) {
-        sample_buffer = 0;
+		k_sleep(K_MSEC(200));
+	}
 
-        err = adc_read(adc_dev, &sequence);
-        if (err < 0) {
-            printk("adc_read failed (%d)\n", err);
-        } else {
-            printk("%lld,%d\n", k_uptime_get(), sample_buffer);
-        }
-
-        k_sleep(K_MSEC(200));
-    }
-
-    return 0;
+	return 0;
 }

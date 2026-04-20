@@ -61,7 +61,7 @@ last_filtered = None
 
 
 def find_port():
-    ports = sorted(glob.glob("/dev/ttyACM2"))
+    ports = sorted(glob.glob("/dev/ttyACM1"))
     if not ports:
         return None
     return ports[0]
