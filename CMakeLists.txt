@@ -13,7 +13,6 @@ target_sources(app PRIVATE
 
 # Header dosyalarının yolu
 target_include_directories(app PRIVATE
-    inc
     app_drivers
     app_tasks
     app_lib
