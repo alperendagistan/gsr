@@ -5,11 +5,16 @@ project(my_adc_app)
 
 # Source dosyaları
 target_sources(app PRIVATE
-    src/main.c
-    src/adc.c
+    main.c
+    app_drivers/adc.c
+    app_tasks/app_tasks.c
+    app_lib/shell.c
 )
 
 # Header dosyalarının yolu
 target_include_directories(app PRIVATE
     inc
+    app_drivers
+    app_tasks
+    app_lib
 )
