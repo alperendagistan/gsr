@@ -9,6 +9,7 @@ target_sources(app PRIVATE
     app_drivers/adc.c
     app_tasks/app_tasks.c
     app_lib/shell.c
+    app_lib/ble_dfu.c
 )
 
 # Header dosyalarının yolu

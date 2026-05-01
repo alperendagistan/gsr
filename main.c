@@ -1,32 +1,36 @@
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
+#include <zephyr/dfu/mcuboot.h>
 
 #include "adc.h"
 #include "app_tasks.h"
+#include "ble_dfu.h"
 
 int main(void)
 {
-	int err;
-	
 	printk("=================================\n");
-	printk("    GSR Application Started\n");
+	printk("    GSR Application v1.0.2\n");
+	printk("    *** DFU UPDATE SUCCESS ***\n");
 	printk("=================================\n");
 
-	/* ADC başlat */
-	// err = adc_init();
-	// if (err) {
-	// 	printk("ADC init failed: %d\n", err);
-	// 	return 0;
-	// }
+	/* MCUboot: confirm current image so bootloader won't revert */
+	if (!boot_is_img_confirmed()) {
+		boot_write_img_confirmed();
+		printk("Image confirmed\n");
+	}
 
-	/* Shell'i başlat */
+	/* Shell */
 	app_shell_init();
 
-	/* Task'ları başlat */
+	/* BLE + mcumgr SMP for OTA DFU */
+	if (ble_dfu_init()) {
+		printk("BLE DFU init failed\n");
+	}
+
+	/* Tasks */
 	heart_beat_task_start();
 
-	printk("Main: waiting for tasks...\n");
-	printk("Shell commands: 'reset' to reboot, 'sysinfo' for system info\n\n");
+	printk("System ready. Shell on UART, DFU over BLE.\n");
 
 	while (1) {
 		k_sleep(K_FOREVER);
