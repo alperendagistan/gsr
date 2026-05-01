@@ -20,7 +20,7 @@ static void heart_beat_task(void *p1, void *p2, void *p3)
 	printk("Heart beat task started\n");
 
 	while (1) {
-		printk("Heart beat\n");
+		printk("alive %lld\n", k_uptime_get());
 		k_sleep(K_SECONDS(2));
 	}
 }

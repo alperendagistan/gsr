@@ -2,7 +2,6 @@
 #include <zephyr/sys/printk.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
-#include <zephyr/bluetooth/gatt.h>
 
 #include "ble_dfu.h"
 
@@ -19,35 +18,32 @@ static const struct bt_data ad[] = {
 		sizeof(CONFIG_BT_DEVICE_NAME) - 1),
 };
 
-static void exchange_func(struct bt_conn *conn, uint8_t att_err,
-			  struct bt_gatt_exchange_params *params)
+static void adv_restart_work_handler(struct k_work *work)
 {
-	printk("BLE: MTU exchange %s (MTU=%u)\n",
-	       att_err ? "failed" : "done",
-	       bt_gatt_get_mtu(conn));
+	int err = bt_le_adv_start(&adv_param, ad, ARRAY_SIZE(ad), NULL, 0);
+	if (err) {
+		printk("BLE: adv restart failed (%d)\n", err);
+	} else {
+		printk("BLE: advertising restarted\n");
+	}
 }
 
-static struct bt_gatt_exchange_params exchange_params = {
-	.func = exchange_func,
-};
+static K_WORK_DEFINE(adv_restart_work, adv_restart_work_handler);
 
 static void connected_cb(struct bt_conn *conn, uint8_t err)
 {
 	if (err) {
 		printk("BLE: connection failed (err %d)\n", err);
+		k_work_submit(&adv_restart_work);
 		return;
 	}
 	printk("BLE: connected\n");
-
-	/* Request MTU exchange so mcumgr SMP can use large packets */
-	bt_gatt_exchange_mtu(conn, &exchange_params);
 }
 
 static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
 {
 	printk("BLE: disconnected (reason %d)\n", reason);
-
-	bt_le_adv_start(&adv_param, ad, ARRAY_SIZE(ad), NULL, 0);
+	k_work_submit(&adv_restart_work);
 }
 
 BT_CONN_CB_DEFINE(conn_cbs) = {

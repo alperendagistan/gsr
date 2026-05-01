@@ -9,8 +9,8 @@
 int main(void)
 {
 	printk("=================================\n");
-	printk("    GSR Application v1.0.2\n");
-	printk("    *** DFU UPDATE SUCCESS ***\n");
+	printk("    GSR Application v1.0.3\n");
+	printk("    >> OTA ile yuklendi! <<\n");
 	printk("=================================\n");
 
 	/* MCUboot: confirm current image so bootloader won't revert */
