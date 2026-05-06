@@ -2,21 +2,28 @@
 #include <zephyr/sys/printk.h>
 #include <zephyr/dfu/mcuboot.h>
 
+#include "main.h"
 #include "adc.h"
 #include "app_tasks.h"
 #include "ble_dfu.h"
 
 int main(void)
 {
+	int err;
+
 	printk("=================================\n");
-	printk("    GSR Application v1.0.3\n");
+	printk("    GSR Application v" APP_VERSION_STRING "\n");
 	printk("    >> OTA ile yuklendi! <<\n");
 	printk("=================================\n");
 
 	/* MCUboot: confirm current image so bootloader won't revert */
 	if (!boot_is_img_confirmed()) {
-		boot_write_img_confirmed();
-		printk("Image confirmed\n");
+		err = boot_write_img_confirmed();
+		if (err) {
+			printk("Image confirm failed (%d)\n", err);
+		} else {
+			printk("Image confirmed\n");
+		}
 	}
 
 	/* Shell */

@@ -1,0 +1,7 @@
+/* MCUboot Board Overlay for nRF54L15DK CPUAPP */
+
+/ {
+    chosen {
+        zephyr,code-partition = &boot_partition;
+    };
+};
