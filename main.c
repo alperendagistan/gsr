@@ -13,7 +13,6 @@ int main(void)
 
 	printk("=================================\n");
 	printk("    GSR Application v" APP_VERSION_STRING "\n");
-	printk("    >> OTA ile yuklendi! <<\n");
 	printk("=================================\n");
 
 	/* MCUboot: confirm current image so bootloader won't revert */

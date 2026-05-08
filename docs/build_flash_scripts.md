@@ -71,10 +71,11 @@ BOARD_SELECTED=1 BOARD=nrf54l15dk/nrf54l15/cpuapp ./build.sh
 
 Build çıktıları iki yerde oluşur:
 
-| Konum | İçerik |
-| --- | --- |
+| Konum                   | İçerik                         |
+| ----------------------- | ------------------------------ |
 | `~/zephyrproject/build` | West/sysbuild ana build dizini |
-| `./build` | Versiyonlanmış kopya çıktılar |
+| `./build`               | Versiyonlanmış kopya çıktılar  |
+
 
 Örnek çıktı dosyaları:
 
