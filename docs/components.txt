@@ -1,0 +1,38 @@
+=== GSR Circuit Component List ===
+
+--- Sensors ---
+SKIN1
+SKIN2
+Cırt Cırt alındı.
+Bakır alındı.
+Gümüş levha bakılacak.
+
+--- Resistors --- -> alındı
+R1 100k
+R2 220
+R3 10k
+R4 1M
+R5 3.3M
+R6 1k
+R8 3.9M
+
+--- Capacitors --- -> alındı
+C1 10nF
+C2 0.1uF
+C3 0.1uF
+
+--- Diodes --- -> alındı
+D1 -> 1N4148
+D2 -> 1N4148
+D3 -> 1N4148
+
+--- IC --- -> alındı
+2x IC1 MCP6002 (Dual Op-Amp)
+
+--- Output --- -> alındı
+LED1
+
+--- Supply --- -> MCU VDD kullanılacak
+V+
+V-
+
