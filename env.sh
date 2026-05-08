@@ -40,8 +40,10 @@ fi
 export ZEPHYR_BASE="$ZEPHYR_WORKSPACE/zephyr"
 export WEST_WORKSPACE="$ZEPHYR_WORKSPACE"
 
-# --- Board ---
-export BOARD="${BOARD:-nrf54l15dk/nrf54l15/cpuapp}"
+# --- Board Tanımları ---
+export BOARD_NRF54L="nrf54l15dk/nrf54l15/cpuapp"
+export BOARD_NRF52="nrf52840dk/nrf52840"
+export BOARD="${BOARD:-$BOARD_NRF54L}"
 
 echo "--- Ortam Hazır ---"
 echo "  Toolchain: $TC"

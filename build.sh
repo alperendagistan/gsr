@@ -8,6 +8,22 @@ set -e
 
 source "$(dirname "$0")/env.sh"
 
+# --- Board Seçimi ---
+if [ -z "$BOARD_SELECTED" ]; then
+    echo ""
+    echo "Board seçin:"
+    echo "  1) nRF54L15 ($BOARD_NRF54L)"
+    echo "  2) nRF52840 ($BOARD_NRF52)"
+    echo ""
+    read -rp "Seçiminiz [1]: " BOARD_CHOICE
+    case "${BOARD_CHOICE:-1}" in
+        1) export BOARD="$BOARD_NRF54L" ;;
+        2) export BOARD="$BOARD_NRF52" ;;
+        *) echo "Geçersiz seçim!"; exit 1 ;;
+    esac
+fi
+echo ">> Board: $BOARD"
+
 BUILD_DIR="$WEST_WORKSPACE/build"
 PRISTINE=""
 
